@@ -1,0 +1,1481 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>منصة Blend - نظام إدارة المنصة التعليمية</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .header {
+            background: #2d3748;
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin: 8px 0;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 12px;
+        }
+
+        .main-card {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .quick-info {
+            animation: slideInDown 0.5s ease-out;
+        }
+
+        @media (max-width: 768px) {
+            .quick-info {
+                grid-template-columns: 1fr !important;
+            }
+        }
+
+        .tabs {
+            display: flex;
+            background: #f7fafc;
+            border-bottom: 2px solid #e2e8f0;
+            overflow-x: auto;
+        }
+
+        .tab-btn {
+            padding: 12px 16px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            color: #666;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .tab-content {
+            padding: 25px;
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        input, select, textarea {
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 5px;
+            font-size: 14px;
+            text-align: right;
+            font-family: Arial;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #5568d3;
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #cbd5e0;
+            color: #2d3748;
+        }
+
+        .btn-secondary:hover {
+            background: #a0aec0;
+        }
+
+        .btn-danger {
+            background: #fc8181;
+            color: white;
+            padding: 6px 10px;
+            font-size: 12px;
+        }
+
+        .btn-small {
+            padding: 4px 8px;
+            font-size: 12px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #2d3748;
+            font-size: 13px;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+        }
+
+        .list-item {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 5px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+
+        .list-item-info {
+            flex: 1;
+        }
+
+        .list-item-title {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .list-item-detail {
+            color: #666;
+            font-size: 13px;
+            margin: 3px 0;
+        }
+
+        .list-item-actions {
+            display: flex;
+            gap: 5px;
+            margin-right: 10px;
+        }
+
+        .schedule-day {
+            background: #f7fafc;
+            padding: 15px;
+            border-radius: 5px;
+            border-right: 4px solid #667eea;
+            margin-bottom: 15px;
+        }
+
+        .schedule-day-title {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .schedule-slot {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            background: white;
+            margin-bottom: 8px;
+            border-radius: 3px;
+            border-right: 3px solid #667eea;
+        }
+
+        .schedule-slot.stopped {
+            border-right-color: #fc8181;
+            background: #fff5f5;
+        }
+
+        .slot-time {
+            font-weight: bold;
+            color: #667eea;
+            min-width: 80px;
+            padding-right: 15px;
+        }
+
+        .slot-time.stopped {
+            color: #fc8181;
+        }
+
+        .slot-students {
+            flex: 1;
+            color: #2d3748;
+        }
+
+        .slot-status {
+            color: #fc8181;
+            font-weight: bold;
+            font-size: 12px;
+            margin-right: 10px;
+        }
+
+        .summary-box {
+            background: #edf2f7;
+            border: 2px solid #cbd5e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #cbd5e0;
+            font-size: 15px;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+        }
+
+        .summary-value {
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #999;
+            padding: 30px;
+        }
+
+        h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        h3 {
+            color: #2d3748;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 5px;
+        }
+
+        .badge-active {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .badge-stopped {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .badge-quran {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .badge-arabic {
+            background: #fbd38d;
+            color: #7c2d12;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal.show {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+
+        .close-modal {
+            float: left;
+            font-size: 24px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close-modal:hover {
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🎓 منصة Blend - نظام إدارة المنصة التعليمية</h1>
+        <p>محاسبة شاملة + إدارة الطلاب + جدول المواعيد + تذكيرات ذكية</p>
+    </div>
+
+    <div class="container">
+        <!-- جدول المواعيد السريع (الأول) -->
+        <div class="quick-info" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+            <!-- الجدول السريع -->
+            <div class="main-card">
+                <div style="background: #667eea; color: white; padding: 15px; border-radius: 10px 10px 0 0; display: flex; justify-content: space-between; align-items: center;">
+                    <h3 style="margin: 0;">📅 جدول المواعيد</h3>
+                    <button class="btn btn-secondary" onclick="exportToCalendar()" style="padding: 5px 10px; font-size: 12px;" title="تصدير إلى تقويم">📤</button>
+                </div>
+                <div id="quickScheduleList" style="padding: 15px; max-height: 400px; overflow-y: auto;"></div>
+            </div>
+            
+            <!-- قائمة الطلاب -->
+            <div class="main-card">
+                <div style="background: #667eea; color: white; padding: 15px; border-radius: 10px 10px 0 0;">
+                    <h3 style="margin: 0;">👥 قائمة الطلاب</h3>
+                </div>
+                <div id="quickStudentsList" style="padding: 15px; max-height: 400px; overflow-y: auto;"></div>
+            </div>
+        </div>
+
+        <!-- الإحصائيات -->
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-label">👥 عدد الطلاب</div>
+                <div class="stat-value" id="totalStudents">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">💰 الإيرادات</div>
+                <div class="stat-value" id="totalRevenue">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">💸 المصاريف</div>
+                <div class="stat-value" id="totalExpenses">0</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">📈 صافي الأرباح</div>
+                <div class="stat-value" id="netProfit" style="color: #48bb78;">0</div>
+            </div>
+        </div>
+
+        <!-- البطاقة الرئيسية -->
+        <div class="main-card">
+            <!-- الأتاب -->
+            <div class="tabs">
+                <button class="tab-btn active" onclick="switchTab('students')">👥 الطلاب</button>
+                <button class="tab-btn" onclick="switchTab('schedule')">📅 الجدول</button>
+                <button class="tab-btn" onclick="switchTab('payments')">💳 الدفعات</button>
+                <button class="tab-btn" onclick="switchTab('expenses')">💸 المصاريف</button>
+                <button class="tab-btn" onclick="switchTab('reports')">📊 التقارير</button>
+            </div>
+
+            <!-- تبويب الطلاب -->
+            <div id="students" class="tab-content active">
+                <h2>إدارة الطلاب</h2>
+                <button class="btn btn-primary" onclick="openAddStudentModal()">➕ إضافة طالب جديد</button>
+                <div id="studentsList" style="margin-top: 20px;"></div>
+            </div>
+
+            <!-- تبويب الجدول -->
+            <div id="schedule" class="tab-content">
+                <h2>📅 جدول المواعيد الأسبوعي</h2>
+                <button class="btn btn-primary" onclick="openScheduleModal()">✏️ تعديل الجدول</button>
+                <div id="scheduleDisplay" style="margin-top: 20px;"></div>
+            </div>
+
+            <!-- تبويب الدفعات -->
+            <div id="payments" class="tab-content">
+                <h2>تسجيل الدفعات</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>اسم الطالب</label>
+                        <select id="paymentStudent"></select>
+                    </div>
+                    <div class="form-group">
+                        <label>نوع الحصة</label>
+                        <select id="courseType" onchange="updatePrice()">
+                            <option value="">اختر نوع الحصة</option>
+                            <option value="quran">📖 قرآن (20 دينار)</option>
+                            <option value="arabic">📝 لغة عربية (40 دينار)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>المبلغ</label>
+                        <input type="number" id="paymentAmount" placeholder="0" readonly style="background: #f0f0f0;">
+                    </div>
+                    <div class="form-group">
+                        <label>التاريخ</label>
+                        <input type="date" id="paymentDate">
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="addPayment()" style="width: 100%; padding: 12px;">➕ إضافة دفعة</button>
+                
+                <h3 style="margin-top: 30px;">سجل الدفعات</h3>
+                <div id="paymentsList"></div>
+            </div>
+
+            <!-- تبويب المصاريف -->
+            <div id="expenses" class="tab-content">
+                <h2>المصاريف</h2>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>نوع المصروف</label>
+                        <select id="expenseType">
+                            <option value="">اختر نوع المصروف</option>
+                            <option value="promotion">📣 مصاريف ترويج</option>
+                            <option value="other">📝 مصاريف أخرى</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>المبلغ</label>
+                        <input type="number" id="expenseAmount" placeholder="0">
+                    </div>
+                    <div class="form-group">
+                        <label>التاريخ</label>
+                        <input type="date" id="expenseDate">
+                    </div>
+                    <div class="form-group">
+                        <label>الوصف</label>
+                        <input type="text" id="expenseDescription" placeholder="وصف المصروف">
+                    </div>
+                </div>
+                <button class="btn btn-success" onclick="addExpense()" style="width: 100%; padding: 12px;">➕ إضافة مصروف</button>
+                
+                <h3 style="margin-top: 30px;">سجل المصاريف</h3>
+                <div id="expensesList"></div>
+            </div>
+
+            <!-- تبويب التقارير -->
+            <div id="reports" class="tab-content">
+                <h2>📊 التقارير والإحصائيات</h2>
+                
+                <div class="summary-box">
+                    <h3>📈 ملخص الأرباح والخسائر</h3>
+                    <div class="summary-row">
+                        <span>إجمالي الإيرادات:</span>
+                        <span class="summary-value" id="rptRevenue">0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>حصة المعلمة (50%):</span>
+                        <span class="summary-value" id="rptTeacher" style="color: #ed8936;">0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>حصة المنصة (50%):</span>
+                        <span class="summary-value" id="rptPlatform" style="color: #38b2ac;">0</span>
+                    </div>
+                    <div class="summary-row" style="border-bottom: 2px solid #cbd5e0; padding-top: 15px; margin-top: 15px;">
+                        <span>إجمالي المصاريف:</span>
+                        <span class="summary-value" id="rptExpenses" style="color: #fc8181;">0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>💚 صافي أرباح المنصة:</span>
+                        <span class="summary-value" id="rptNetProfit" style="color: #48bb78; font-size: 18px;">0</span>
+                    </div>
+                </div>
+
+                <div class="summary-box">
+                    <h3>👥 إحصائيات الطلاب</h3>
+                    <div class="summary-row">
+                        <span>إجمالي الطلاب:</span>
+                        <span class="summary-value" id="rptTotalStudents">0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>طلاب نشطين:</span>
+                        <span class="summary-value" id="rptActiveStudents" style="color: #48bb78;">0</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>طلاب متوقفين:</span>
+                        <span class="summary-value" id="rptStoppedStudents" style="color: #fc8181;">0</span>
+                    </div>
+                </div>
+
+                <button class="btn btn-primary" onclick="downloadReport()" style="width: 100%; padding: 12px; margin-top: 20px;">⬇️ تحميل التقرير (CSV)</button>
+
+                <button class="btn btn-danger" onclick="resetToDefaults()" style="width: 100%; padding: 12px; margin-top: 10px;">🔄 إعادة تحميل البيانات الافتراضية</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- مودال إضافة طالب -->
+    <div id="addStudentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('addStudentModal')">&times;</span>
+            <div class="modal-header">➕ إضافة طالب جديد</div>
+            <div class="form-group">
+                <label>اسم الطالب</label>
+                <input type="text" id="studentName" placeholder="اسم الطالب">
+            </div>
+            <div class="form-group">
+                <label>تاريخ الانضمام</label>
+                <input type="date" id="studentJoinDate">
+            </div>
+            <div class="form-group">
+                <label>نوع الحصة</label>
+                <select id="studentCourseType">
+                    <option value="quran">📖 قرآن</option>
+                    <option value="arabic">📝 لغة عربية</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>حالة الطالب</label>
+                <select id="studentStatus">
+                    <option value="active">✅ نشط</option>
+                    <option value="stopped">🛑 متوقف</option>
+                </select>
+            </div>
+            <button class="btn btn-success" onclick="addStudent()" style="width: 100%; padding: 12px;">✅ إضافة</button>
+        </div>
+    </div>
+
+    <!-- مودال تعديل الجدول -->
+    <div id="scheduleModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('scheduleModal')">&times;</span>
+            <div class="modal-header">✏️ تعديل الجدول</div>
+            <div id="scheduleEditForm"></div>
+            <button class="btn btn-success" onclick="saveSchedule()" style="width: 100%; padding: 12px; margin-top: 20px;">💾 حفظ الجدول</button>
+        </div>
+    </div>
+
+    <script>
+        // البيانات
+        let students = [];
+        let payments = {};
+        let expenses = [];
+        let schedule = {};
+
+        const courseTypes = {
+            quran: { name: 'قرآن', price: 20 },
+            arabic: { name: 'لغة عربية', price: 40 }
+        };
+
+        const days = ['السبت', 'الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس'];
+
+        // جدول افتراضي
+        const defaultSchedule = {
+            'السبت': [
+                { time: '14:00', students: 'لجين وبيسان', stopped: false },
+                { time: '15:00', students: 'ليلى', stopped: false },
+                { time: '15:30', students: 'هاشم', stopped: false },
+                { time: '16:00', students: 'لمى', stopped: false },
+                { time: '17:00', students: 'محمد الشامي', stopped: false }
+            ],
+            'الأحد': [
+                { time: '15:30', students: 'زين ومسك', stopped: false },
+                { time: '17:00', students: 'ليلاس', stopped: false }
+            ],
+            'الاثنين': [
+                { time: '14:00', students: 'ليلى', stopped: false },
+                { time: '14:30', students: 'هاشم', stopped: false },
+                { time: '15:30', students: 'هاشم - عربي', stopped: false },
+                { time: '16:20', students: 'لجين وبيسان', stopped: false },
+                { time: '15:30', students: 'سيلينا', stopped: true },
+                { time: '17:00', students: 'عاصم', stopped: true }
+            ],
+            'الثلاثاء': [
+                { time: '17:00', students: 'ليلاس', stopped: false }
+            ],
+            'الأربعاء': [
+                { time: '15:30', students: 'زين ومسك', stopped: false },
+                { time: '16:00', students: 'هاشم - عربي', stopped: false },
+                { time: '17:00', students: 'عاصم', stopped: true }
+            ],
+            'الخميس': [
+                { time: '15:30', students: 'لمى', stopped: false },
+                { time: '18:00', students: 'محمد الشامي', stopped: false },
+                { time: '19:00', students: 'سيلينا', stopped: true }
+            ]
+        };
+
+        // قائمة الطلاب الافتراضية من الجدول
+        const defaultStudents = [
+            { id: 1, name: 'لجين', joinDate: '2026-02-16', courseType: 'quran', status: 'active' },
+            { id: 2, name: 'بيسان', joinDate: '2026-02-16', courseType: 'quran', status: 'active' },
+            { id: 3, name: 'ليلى', joinDate: '2026-08-05', courseType: 'quran', status: 'active' },
+            { id: 4, name: 'هاشم', joinDate: '2026-08-05', courseType: 'quran', status: 'active' },
+            { id: 5, name: 'لمى', joinDate: '2026-04-21', courseType: 'quran', status: 'active' },
+            { id: 6, name: 'زين', joinDate: '2026-02-17', courseType: 'quran', status: 'stopped' },
+            { id: 7, name: 'مسك', joinDate: '2026-02-17', courseType: 'quran', status: 'stopped' },
+            { id: 8, name: 'ليلاس', joinDate: '2026-07-22', courseType: 'quran', status: 'active' },
+            { id: 9, name: 'سيلينا', joinDate: new Date().toISOString().split('T')[0], courseType: 'quran', status: 'stopped' },
+            { id: 10, name: 'عاصم', joinDate: new Date().toISOString().split('T')[0], courseType: 'quran', status: 'stopped' },
+            { id: 11, name: 'محمد الشامي', joinDate: '2026-08-12', courseType: 'quran', status: 'active' },
+            { id: 12, name: 'هاشم - عربي', joinDate: '2026-08-08', courseType: 'arabic', status: 'active' }
+        ];
+
+        // الدفعات الافتراضية للجين وبيسان (من 16/2/2026 شهري 20 دينار)
+        // وليلى وهاشم (من 5/8/2026)
+        // ولمى (من 21/4/2026)
+        // وزين ومسك (من 17/2/2026 إلى 17/7/2026 ثم توقف)
+        // وليلاس (من 22/7/2026)
+        const defaultPayments = {
+            'لجين': [
+                { amount: 20, date: '2026-02-16', type: 'quran' },
+                { amount: 20, date: '2026-03-16', type: 'quran' },
+                { amount: 20, date: '2026-04-16', type: 'quran' },
+                { amount: 20, date: '2026-05-16', type: 'quran' },
+                { amount: 20, date: '2026-06-16', type: 'quran' },
+                { amount: 20, date: '2026-07-16', type: 'quran' },
+                { amount: 20, date: '2026-08-16', type: 'quran' }
+            ],
+            'بيسان': [
+                { amount: 20, date: '2026-02-16', type: 'quran' },
+                { amount: 20, date: '2026-03-16', type: 'quran' },
+                { amount: 20, date: '2026-04-16', type: 'quran' },
+                { amount: 20, date: '2026-05-16', type: 'quran' },
+                { amount: 20, date: '2026-06-16', type: 'quran' },
+                { amount: 20, date: '2026-07-16', type: 'quran' },
+                { amount: 20, date: '2026-08-16', type: 'quran' }
+            ],
+            'ليلى': [
+                { amount: 20, date: '2026-08-05', type: 'quran' }
+            ],
+            'هاشم': [
+                { amount: 20, date: '2026-08-05', type: 'quran' }
+            ],
+            'لمى': [
+                { amount: 20, date: '2026-04-21', type: 'quran' },
+                { amount: 20, date: '2026-05-21', type: 'quran' },
+                { amount: 20, date: '2026-06-21', type: 'quran' },
+                { amount: 20, date: '2026-07-21', type: 'quran' },
+                { amount: 20, date: '2026-08-21', type: 'quran' }
+            ],
+            'زين': [
+                { amount: 20, date: '2026-02-17', type: 'quran' },
+                { amount: 20, date: '2026-03-17', type: 'quran' },
+                { amount: 20, date: '2026-04-17', type: 'quran' },
+                { amount: 20, date: '2026-05-17', type: 'quran' },
+                { amount: 20, date: '2026-06-17', type: 'quran' },
+                { amount: 20, date: '2026-07-17', type: 'quran' }
+            ],
+            'مسك': [
+                { amount: 20, date: '2026-02-17', type: 'quran' },
+                { amount: 20, date: '2026-03-17', type: 'quran' },
+                { amount: 20, date: '2026-04-17', type: 'quran' },
+                { amount: 20, date: '2026-05-17', type: 'quran' },
+                { amount: 20, date: '2026-06-17', type: 'quran' },
+                { amount: 20, date: '2026-07-17', type: 'quran' }
+            ],
+            'ليلاس': [
+                { amount: 20, date: '2026-07-22', type: 'quran' }
+            ],
+            'هاشم - عربي': [
+                { amount: 40, date: '2026-08-08', type: 'arabic' }
+            ]
+        };
+
+        // تحميل البيانات
+        function loadData() {
+            const saved = localStorage.getItem('platformData');
+            if (saved) {
+                const data = JSON.parse(saved);
+                students = data.students || [];
+                payments = data.payments || {};
+                expenses = data.expenses || [];
+                schedule = data.schedule || defaultSchedule;
+                
+                // تحديث تاريخ انضمام وإضافة الدفعات
+                const lajeenStudent = students.find(s => s.name === 'لجين');
+                const bisanStudent = students.find(s => s.name === 'بيسان');
+                const layla = students.find(s => s.name === 'ليلى');
+                const hashem = students.find(s => s.name === 'هاشم');
+                const lama = students.find(s => s.name === 'لمى');
+                const zayn = students.find(s => s.name === 'زين');
+                const mask = students.find(s => s.name === 'مسك');
+                const lilas = students.find(s => s.name === 'ليلاس');
+                const mohammad = students.find(s => s.name === 'محمد الشامي');
+                
+                if (lajeenStudent) {
+                    lajeenStudent.joinDate = '2026-02-16';
+                    if (!payments['لجين'] || payments['لجين'].length === 0) {
+                        payments['لجين'] = JSON.parse(JSON.stringify(defaultPayments['لجين']));
+                    }
+                }
+                
+                if (bisanStudent) {
+                    bisanStudent.joinDate = '2026-02-16';
+                    if (!payments['بيسان'] || payments['بيسان'].length === 0) {
+                        payments['بيسان'] = JSON.parse(JSON.stringify(defaultPayments['بيسان']));
+                    }
+                }
+                
+                if (layla) {
+                    layla.joinDate = '2026-08-05';
+                    if (!payments['ليلى'] || payments['ليلى'].length === 0) {
+                        payments['ليلى'] = JSON.parse(JSON.stringify(defaultPayments['ليلى']));
+                    }
+                }
+                
+                if (hashem) {
+                    hashem.joinDate = '2026-08-05';
+                    if (!payments['هاشم'] || payments['هاشم'].length === 0) {
+                        payments['هاشم'] = JSON.parse(JSON.stringify(defaultPayments['هاشم']));
+                    }
+                }
+                
+                if (lama) {
+                    lama.joinDate = '2026-04-21';
+                    if (!payments['لمى'] || payments['لمى'].length === 0) {
+                        payments['لمى'] = JSON.parse(JSON.stringify(defaultPayments['لمى']));
+                    }
+                }
+                
+                if (zayn) {
+                    zayn.joinDate = '2026-02-17';
+                    zayn.status = 'stopped';
+                    if (!payments['زين'] || payments['زين'].length === 0) {
+                        payments['زين'] = JSON.parse(JSON.stringify(defaultPayments['زين']));
+                    }
+                }
+                
+                if (mask) {
+                    mask.joinDate = '2026-02-17';
+                    mask.status = 'stopped';
+                    if (!payments['مسك'] || payments['مسك'].length === 0) {
+                        payments['مسك'] = JSON.parse(JSON.stringify(defaultPayments['مسك']));
+                    }
+                }
+                
+                if (lilas) {
+                    lilas.joinDate = '2026-07-22';
+                    if (!payments['ليلاس'] || payments['ليلاس'].length === 0) {
+                        payments['ليلاس'] = JSON.parse(JSON.stringify(defaultPayments['ليلاس']));
+                    }
+                }
+                
+                if (mohammad) {
+                    mohammad.joinDate = '2026-08-12';
+                    if (!payments['محمد الشامي']) {
+                        payments['محمد الشامي'] = [];
+                    }
+                }
+                
+                const hashemArabic = students.find(s => s.name === 'هاشم - عربي');
+                if (hashemArabic) {
+                    hashemArabic.joinDate = '2026-08-08';
+                    if (!payments['هاشم - عربي'] || payments['هاشم - عربي'].length === 0) {
+                        payments['هاشم - عربي'] = JSON.parse(JSON.stringify(defaultPayments['هاشم - عربي']));
+                    }
+                }
+            } else {
+                // تحميل البيانات الافتراضية للمرة الأولى
+                students = [...defaultStudents];
+                payments = JSON.parse(JSON.stringify(defaultPayments));
+                schedule = defaultSchedule;
+            }
+            
+            // تحميل التذكيرات المحفوظة
+            days.forEach(day => {
+                schedule[day]?.forEach(slot => {
+                    const reminderKey = `reminder-${day}-${slot.time}`;
+                    if (localStorage.getItem(reminderKey) === 'true') {
+                        scheduleReminder(day, slot.time, slot.students);
+                    }
+                });
+            });
+            
+            saveData();
+            updateUI();
+        }
+
+        // حفظ البيانات
+        function saveData() {
+            localStorage.setItem('platformData', JSON.stringify({
+                students,
+                payments,
+                expenses,
+                schedule
+            }));
+            updateUI();
+        }
+
+        // فتح مودال إضافة طالب
+        function openAddStudentModal() {
+            document.getElementById('addStudentModal').classList.add('show');
+            document.getElementById('studentJoinDate').value = new Date().toISOString().split('T')[0];
+        }
+
+        // إضافة طالب
+        function addStudent() {
+            const name = document.getElementById('studentName').value.trim();
+            const joinDate = document.getElementById('studentJoinDate').value;
+            const courseType = document.getElementById('studentCourseType').value;
+            const status = document.getElementById('studentStatus').value;
+
+            if (!name) {
+                alert('أدخل اسم الطالب');
+                return;
+            }
+
+            if (!joinDate) {
+                alert('اختر تاريخ الانضمام');
+                return;
+            }
+
+            if (students.find(s => s.name.trim() === name)) {
+                alert('الطالب موجود بالفعل! ✅');
+                return;
+            }
+
+            students.push({
+                id: Date.now(),
+                name,
+                joinDate,
+                courseType,
+                status
+            });
+
+            document.getElementById('studentName').value = '';
+            saveData();
+            closeModal('addStudentModal');
+            alert('تم إضافة الطالب بنجاح! ✅');
+        }
+
+        // عرض قائمة الطلاب
+        function displayStudents() {
+            const list = document.getElementById('studentsList');
+            if (students.length === 0) {
+                list.innerHTML = '<div class="empty-state">لا توجد طلاب</div>';
+                return;
+            }
+
+            list.innerHTML = students.map(student => `
+                <div class="list-item">
+                    <div class="list-item-info">
+                        <div class="list-item-title">
+                            ${student.name}
+                            <span class="badge ${student.status === 'active' ? 'badge-active' : 'badge-stopped'}">
+                                ${student.status === 'active' ? '✅ نشط' : '🛑 متوقف'}
+                            </span>
+                            <span class="badge ${student.courseType === 'quran' ? 'badge-quran' : 'badge-arabic'}">
+                                ${student.courseType === 'quran' ? '📖 قرآن' : '📝 عربي'}
+                            </span>
+                        </div>
+                        <div class="list-item-detail">تاريخ الانضمام: ${student.joinDate}</div>
+                        <div class="list-item-detail">المبلغ المدفوع: ${getStudentTotal(student.name).toFixed(2)} دينار</div>
+                    </div>
+                    <div class="list-item-actions">
+                        <button class="btn btn-danger btn-small" onclick="deleteStudent(${student.id})">حذف</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // حذف طالب
+        function deleteStudent(id) {
+            if (confirm('هل أنت متأكد من حذف الطالب؟')) {
+                const student = students.find(s => s.id === id);
+                students = students.filter(s => s.id !== id);
+                delete payments[student.name];
+                saveData();
+            }
+        }
+
+        // عرض الجدول
+        function displaySchedule() {
+            const display = document.getElementById('scheduleDisplay');
+            let html = '';
+
+            days.forEach(day => {
+                const daySchedule = schedule[day] || [];
+                if (daySchedule.length === 0) return;
+
+                html += `<div class="schedule-day">
+                    <div class="schedule-day-title">🔴 ${day}</div>`;
+
+                daySchedule.forEach(slot => {
+                    html += `<div class="schedule-slot ${slot.stopped ? 'stopped' : ''}">
+                        <div class="slot-time ${slot.stopped ? 'stopped' : ''}">${slot.time}</div>
+                        <div class="slot-students">${slot.students}</div>
+                        ${slot.stopped ? '<div class="slot-status">🛑 متوقف</div>' : ''}
+                    </div>`;
+                });
+
+                html += '</div>';
+            });
+
+            display.innerHTML = html;
+        }
+
+        // فتح مودال تعديل الجدول
+        function openScheduleModal() {
+            const form = document.getElementById('scheduleEditForm');
+            let html = '';
+
+            days.forEach(day => {
+                const daySchedule = schedule[day] || [];
+                html += `<h3>${day}</h3>`;
+                daySchedule.forEach((slot, idx) => {
+                    html += `
+                        <div class="form-row" style="margin-bottom: 10px;">
+                            <input type="time" value="${slot.time}" onchange="schedule['${day}'][${idx}].time = this.value">
+                            <input type="text" value="${slot.students}" placeholder="أسماء الطلاب" onchange="schedule['${day}'][${idx}].students = this.value">
+                            <label><input type="checkbox" ${slot.stopped ? 'checked' : ''} onchange="schedule['${day}'][${idx}].stopped = this.checked"> متوقف</label>
+                        </div>
+                    `;
+                });
+            });
+
+            form.innerHTML = html;
+            document.getElementById('scheduleModal').classList.add('show');
+        }
+
+        function saveSchedule() {
+            saveData();
+            closeModal('scheduleModal');
+            displaySchedule();
+        }
+
+        // تحديث السعر
+        function updatePrice() {
+            const courseType = document.getElementById('courseType').value;
+            const amountInput = document.getElementById('paymentAmount');
+
+            if (courseType && courseTypes[courseType]) {
+                amountInput.value = courseTypes[courseType].price;
+            } else {
+                amountInput.value = '';
+            }
+        }
+
+        // إضافة دفعة
+        function addPayment() {
+            const studentName = document.getElementById('paymentStudent').value;
+            const courseType = document.getElementById('courseType').value;
+            const amount = parseFloat(document.getElementById('paymentAmount').value);
+            const date = document.getElementById('paymentDate').value;
+
+            if (!studentName || !courseType || !amount || !date) {
+                alert('أكمل جميع الحقول');
+                return;
+            }
+
+            if (!payments[studentName]) {
+                payments[studentName] = [];
+            }
+
+            payments[studentName].push({
+                amount,
+                date,
+                type: courseType
+            });
+
+            document.getElementById('courseType').value = '';
+            document.getElementById('paymentAmount').value = '';
+            document.getElementById('paymentDate').value = '';
+            saveData();
+        }
+
+        // إضافة مصروف
+        function addExpense() {
+            const type = document.getElementById('expenseType').value;
+            const amount = parseFloat(document.getElementById('expenseAmount').value);
+            const date = document.getElementById('expenseDate').value;
+            const description = document.getElementById('expenseDescription').value;
+
+            if (!type || !amount || !date) {
+                alert('أكمل الحقول المطلوبة');
+                return;
+            }
+
+            expenses.push({
+                id: Date.now(),
+                type,
+                amount,
+                date,
+                description
+            });
+
+            document.getElementById('expenseType').value = '';
+            document.getElementById('expenseAmount').value = '';
+            document.getElementById('expenseDate').value = '';
+            document.getElementById('expenseDescription').value = '';
+            saveData();
+        }
+
+        // حساب الإجمالي
+        function getTotalRevenue() {
+            let total = 0;
+            for (let student in payments) {
+                payments[student].forEach(p => total += p.amount);
+            }
+            return total;
+        }
+
+        function getStudentTotal(studentName) {
+            if (!payments[studentName]) return 0;
+            return payments[studentName].reduce((sum, p) => sum + p.amount, 0);
+        }
+
+        function getTotalExpenses() {
+            return expenses.reduce((sum, e) => sum + e.amount, 0);
+        }
+
+        function getTeacherEarnings() {
+            return getTotalRevenue() * 0.5;
+        }
+
+        function getPlatformEarnings() {
+            return getTotalRevenue() * 0.5;
+        }
+
+        // تحديث الواجهة
+        function updateUI() {
+            document.getElementById('totalStudents').textContent = students.length;
+            document.getElementById('totalRevenue').textContent = getTotalRevenue().toFixed(2);
+            document.getElementById('totalExpenses').textContent = getTotalExpenses().toFixed(2);
+            document.getElementById('netProfit').textContent = (getPlatformEarnings() - getTotalExpenses()).toFixed(2);
+
+            // تحديث select الطلاب
+            const paymentStudent = document.getElementById('paymentStudent');
+            paymentStudent.innerHTML = '<option value="">اختر طالب</option>' + 
+                students.map(s => `<option value="${s.name}">${s.name}</option>`).join('');
+
+            // عرض القوائم
+            displayQuickStudentsList();
+            displayQuickScheduleList();
+            displayStudents();
+            displaySchedule();
+            displayPayments();
+            displayExpenses();
+            updateReports();
+        }
+
+        function displayQuickStudentsList() {
+            const list = document.getElementById('quickStudentsList');
+            if (students.length === 0) {
+                list.innerHTML = '<div style="color: #999; padding: 10px; text-align: center;">لا توجد طلاب</div>';
+                return;
+            }
+
+            list.innerHTML = students.map(student => {
+                const total = getStudentTotal(student.name);
+                return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; border-bottom: 1px solid #eee;">
+                    <div>
+                        <div style="font-weight: bold; color: #2d3748;">${student.name}</div>
+                        <div style="font-size: 12px; color: #999;">
+                            ${student.courseType === 'quran' ? '📖 قرآن' : '📝 عربي'} | 
+                            ${student.status === 'active' ? '✅ نشط' : '🛑 متوقف'}
+                        </div>
+                    </div>
+                    <div style="font-weight: bold; color: #667eea;">${total.toFixed(2)}</div>
+                </div>`;
+            }).join('');
+        }
+
+        function displayQuickScheduleList() {
+            const list = document.getElementById('quickScheduleList');
+            let html = '';
+
+            days.forEach(day => {
+                const daySchedule = schedule[day] || [];
+                if (daySchedule.length === 0) return;
+
+                html += `<div style="margin-bottom: 15px;">
+                    <div style="font-weight: bold; color: #667eea; padding-bottom: 8px; border-bottom: 2px solid #667eea;">${day}</div>`;
+
+                daySchedule.forEach((slot, idx) => {
+                    const reminderKey = `reminder-${day}-${slot.time}`;
+                    const isEnabled = localStorage.getItem(reminderKey) === 'true';
+                    
+                    html += `<div style="padding: 8px 0; font-size: 13px; display: flex; justify-content: space-between; align-items: center;">
+                        <div>
+                            <div style="color: #2d3748;"><strong>${slot.time}</strong> - ${slot.students}</div>
+                            ${slot.stopped ? '<div style="color: #f56565; font-size: 11px;">🛑 متوقف</div>' : ''}
+                        </div>
+                        <button class="btn btn-small ${isEnabled ? 'btn-success' : 'btn-secondary'}" 
+                                onclick="toggleReminder('${day}', '${slot.time}', '${slot.students}')"
+                                style="padding: 4px 8px; font-size: 11px;">
+                            ${isEnabled ? '🔔' : '🔕'}
+                        </button>
+                    </div>`;
+                });
+
+                html += '</div>';
+            });
+
+            list.innerHTML = html || '<div style="color: #999; padding: 10px; text-align: center;">لا يوجد جدول</div>';
+        }
+
+        // نظام التذكيرات
+        function toggleReminder(day, time, students) {
+            const reminderKey = `reminder-${day}-${time}`;
+            const isEnabled = localStorage.getItem(reminderKey) === 'true';
+            
+            if (!isEnabled) {
+                localStorage.setItem(reminderKey, 'true');
+                // طلب الإذن للإشعارات
+                if ('Notification' in window && Notification.permission === 'default') {
+                    Notification.requestPermission();
+                }
+                alert(`✅ تم تفعيل التذكير لحصة ${students} يوم ${day} الساعة ${time}`);
+                scheduleReminder(day, time, students);
+            } else {
+                localStorage.removeItem(reminderKey);
+                alert(`❌ تم إلغاء التذكير لحصة ${students}`);
+            }
+            
+            displayQuickScheduleList();
+        }
+
+        // جدولة التذكير
+        function scheduleReminder(day, time, students) {
+            const dayOfWeek = days.indexOf(day);
+            const now = new Date();
+            const nextDate = new Date();
+            
+            // حساب اليوم التالي بناءً على اسم اليوم
+            let daysUntil = dayOfWeek - now.getDay();
+            if (daysUntil <= 0) daysUntil += 7;
+            
+            nextDate.setDate(nextDate.getDate() + daysUntil);
+            const [hours, minutes] = time.split(':');
+            nextDate.setHours(hours, minutes, 0, 0);
+            
+            const timeUntilReminder = nextDate.getTime() - now.getTime();
+            
+            if (timeUntilReminder > 0) {
+                setTimeout(() => {
+                    if ('Notification' in window && Notification.permission === 'granted') {
+                        new Notification('🔔 تذكير من منصة Blend', {
+                            body: `حصة ${students} الآن - ${time}`,
+                            icon: '🎓'
+                        });
+                    }
+                }, timeUntilReminder);
+            }
+        }
+
+        // تصدير إلى تقويم
+        function exportToCalendar() {
+            let icalContent = 'BEGIN:VCALENDAR\n' +
+                'VERSION:2.0\n' +
+                'PRODID:-//Blend Platform//Schedule//EN\n' +
+                'CALSCALE:GREGORIAN\n' +
+                'METHOD:PUBLISH\n' +
+                'X-WR-CALNAME:منصة Blend - جدول الحصص\n' +
+                'X-WR-TIMEZONE:Asia/Riyadh\n' +
+                'BEGIN:VTIMEZONE\n' +
+                'TZID:Asia/Riyadh\n' +
+                'BEGIN:STANDARD\n' +
+                'TZOFFSETFROM:+0300\n' +
+                'TZOFFSETTO:+0300\n' +
+                'TZNAME:+03\n' +
+                'DTSTART:19700101T000000\n' +
+                'END:STANDARD\n' +
+                'END:VTIMEZONE\n';
+
+            // إضافة كل حصة
+            let eventCounter = 0;
+            days.forEach(day => {
+                const dayOfWeek = days.indexOf(day);
+                schedule[day]?.forEach(slot => {
+                    eventCounter++;
+                    const [hours, minutes] = slot.time.split(':');
+                    
+                    // حساب التاريخ (أول ظهور لهذا اليوم)
+                    const today = new Date();
+                    let daysUntil = dayOfWeek - today.getDay();
+                    if (daysUntil <= 0) daysUntil += 7;
+                    
+                    const eventDate = new Date(today);
+                    eventDate.setDate(eventDate.getDate() + daysUntil);
+                    eventDate.setHours(hours, minutes, 0, 0);
+                    
+                    const dateStr = eventDate.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+                    const endTime = new Date(eventDate.getTime() + 60 * 60000); // مدة الحصة ساعة واحدة
+                    const endDateStr = endTime.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+                    
+                    icalContent += 'BEGIN:VEVENT\n' +
+                        `UID:blend-schedule-${eventCounter}@blendplatform.com\n` +
+                        `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, '').split('.')[0]}Z\n` +
+                        `DTSTART:${dateStr}\n` +
+                        `DTEND:${endDateStr}\n` +
+                        `SUMMARY:${slot.students} (${day})\n` +
+                        `DESCRIPTION:حصة مع ${slot.students}\\nالوقت: ${slot.time}\\nاليوم: ${day}\n` +
+                        `LOCATION:منصة Blend\n` +
+                        (slot.stopped ? 'STATUS:CANCELLED\n' : '') +
+                        'BEGIN:VALARM\n' +
+                        'TRIGGER:-PT15M\n' +
+                        'ACTION:DISPLAY\n' +
+                        `DESCRIPTION:تذكير: حصة ${slot.students} بعد 15 دقيقة\n` +
+                        'END:VALARM\n' +
+                        'END:VEVENT\n';
+                });
+            });
+
+            icalContent += 'END:VCALENDAR';
+
+            // تحميل الملف
+            const blob = new Blob([icalContent], { type: 'text/calendar;charset=utf-8' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'blend-schedule.ics');
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            alert('✅ تم تحميل جدول الحصص!\n\nيمكنك استيراده في Google Calendar أو أي تطبيق تقويم آخر');
+        }
+
+        function displayPayments() {
+            const list = document.getElementById('paymentsList');
+            let html = '';
+
+            students.forEach(student => {
+                const studentPayments = payments[student.name] || [];
+                html += `<div style="margin-bottom: 15px;">
+                    <div style="font-weight: bold; color: #2d3748; padding: 10px 0;">${student.name}</div>`;
+
+                if (studentPayments.length === 0) {
+                    html += '<div style="color: #999;">لم يدفع</div>';
+                } else {
+                    studentPayments.forEach((p, idx) => {
+                        html += `<div style="background: white; padding: 8px; margin-bottom: 5px; border-radius: 3px; display: flex; justify-content: space-between;">
+                            <span>${courseTypes[p.type].name}: ${p.amount} دينار - ${p.date}</span>
+                        </div>`;
+                    });
+                }
+                html += '</div>';
+            });
+
+            list.innerHTML = html || '<div class="empty-state">لا توجد دفعات</div>';
+        }
+
+        function displayExpenses() {
+            const list = document.getElementById('expensesList');
+            if (expenses.length === 0) {
+                list.innerHTML = '<div class="empty-state">لا توجد مصاريف</div>';
+                return;
+            }
+
+            list.innerHTML = expenses.map(exp => `
+                <div class="list-item">
+                    <div class="list-item-info">
+                        <div class="list-item-title">
+                            ${exp.type === 'promotion' ? '📣' : '📝'} ${exp.type === 'promotion' ? 'مصاريف ترويج' : 'مصاريف أخرى'}
+                        </div>
+                        <div class="list-item-detail">${exp.amount} دينار</div>
+                        <div class="list-item-detail">${exp.date}</div>
+                        ${exp.description ? `<div class="list-item-detail">${exp.description}</div>` : ''}
+                    </div>
+                    <div class="list-item-actions">
+                        <button class="btn btn-danger btn-small" onclick="deleteExpense(${exp.id})">حذف</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteExpense(id) {
+            if (confirm('حذف المصروف؟')) {
+                expenses = expenses.filter(e => e.id !== id);
+                saveData();
+            }
+        }
+
+        function updateReports() {
+            const totalRevenue = getTotalRevenue();
+            const platformEarnings = getPlatformEarnings();
+            const teacherEarnings = getTeacherEarnings();
+            const totalExpenses = getTotalExpenses();
+            const netProfit = platformEarnings - totalExpenses;
+
+            document.getElementById('rptRevenue').textContent = totalRevenue.toFixed(2);
+            document.getElementById('rptTeacher').textContent = teacherEarnings.toFixed(2);
+            document.getElementById('rptPlatform').textContent = platformEarnings.toFixed(2);
+            document.getElementById('rptExpenses').textContent = totalExpenses.toFixed(2);
+            document.getElementById('rptNetProfit').textContent = netProfit.toFixed(2);
+
+            const activeCount = students.filter(s => s.status === 'active').length;
+            const stoppedCount = students.filter(s => s.status === 'stopped').length;
+
+            document.getElementById('rptTotalStudents').textContent = students.length;
+            document.getElementById('rptActiveStudents').textContent = activeCount;
+            document.getElementById('rptStoppedStudents').textContent = stoppedCount;
+        }
+
+        function resetToDefaults() {
+            if (confirm('هل تريد إعادة تحميل البيانات الافتراضية؟\nسيتم مسح جميع التغييرات!\n\nستتضمن البيانات:\n- لجين وبيسان: قرآن من 16/2 (7 دفعات)\n- لمى: قرآن من 21/4 (5 دفعات)\n- زين ومسك: قرآن من 17/2 إلى 1/8 (6 دفعات - متوقفين)\n- ليلاس: قرآن من 22/7 (1 دفعة)\n- ليلى وهاشم: قرآن من 5/8 (1 دفعة)\n- محمد الشامي: قرآن من 12/8 (بدون دفعات)\n- هاشم - عربي: عربي من 8/8 (1 دفعة)\n\n📅 الجدول:\n- محمد الشامي: السبت 17:00 والخميس 18:00\n- هاشم - عربي: الاثنين 15:30 والأربعاء 16:00\n\n🔔 سيتم حذف جميع التذكيرات المحفوظة')) {
+                students = JSON.parse(JSON.stringify(defaultStudents));
+                payments = JSON.parse(JSON.stringify(defaultPayments));
+                expenses = [];
+                schedule = JSON.parse(JSON.stringify(defaultSchedule));
+                
+                // حذف التذكيرات المحفوظة
+                for (let key in localStorage) {
+                    if (key.startsWith('reminder-')) {
+                        localStorage.removeItem(key);
+                    }
+                }
+                
+                saveData();
+                alert('✅ تم إعادة تحميل البيانات بنجاح!\n\nإجمالي الإيرادات: 720 دينار\n📅 تم تفعيل منصة Blend كاملة\n🔔 التذكيرات مسحت\n📤 يمكنك تصدير الجدول إلى Google Calendar');
+            }
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
+            
+            document.getElementById(tab).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        function openModal(id) {
+            document.getElementById(id).classList.add('show');
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('show');
+        }
+
+        function downloadReport() {
+            let csv = 'تقرير المنصة التعليمية\n\n';
+            
+            csv += '--- الطلاب ---\n';
+            csv += 'اسم الطالب,النوع,الحالة,تاريخ الانضمام,المبلغ المدفوع\n';
+            students.forEach(student => {
+                csv += `${student.name},${student.courseType},${student.status},${student.joinDate},${getStudentTotal(student.name).toFixed(2)}\n`;
+            });
+
+            csv += '\n--- الدفعات ---\n';
+            csv += 'اسم الطالب,النوع,المبلغ,التاريخ\n';
+            for (let student in payments) {
+                payments[student].forEach(p => {
+                    csv += `${student},${p.type},${p.amount},${p.date}\n`;
+                });
+            }
+
+            csv += '\n--- المصاريف ---\n';
+            csv += 'النوع,المبلغ,التاريخ,الوصف\n';
+            expenses.forEach(exp => {
+                csv += `${exp.type},${exp.amount},${exp.date},${exp.description || '-'}\n`;
+            });
+
+            csv += '\n--- ملخص الأرباح والخسائر ---\n';
+            csv += `إجمالي الإيرادات,${getTotalRevenue().toFixed(2)}\n`;
+            csv += `حصة المعلمة (50%),${getTeacherEarnings().toFixed(2)}\n`;
+            csv += `حصة المنصة (50%),${getPlatformEarnings().toFixed(2)}\n`;
+            csv += `إجمالي المصاريف,${getTotalExpenses().toFixed(2)}\n`;
+            csv += `صافي الأرباح,${(getPlatformEarnings() - getTotalExpenses()).toFixed(2)}\n`;
+
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = `تقرير_المنصة_${new Date().toISOString().split('T')[0]}.csv`;
+            link.click();
+        }
+
+        // تحميل البيانات عند فتح الصفحة
+        window.addEventListener('load', function() {
+            loadData();
+            document.getElementById('paymentDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('expenseDate').value = new Date().toISOString().split('T')[0];
+            
+            // تنبيه المستخدم إذا كانت هذه المرة الأولى
+            const hasShownWelcome = localStorage.getItem('welcomeShown');
+            if (!hasShownWelcome) {
+                setTimeout(() => {
+                    alert('✅ مرحباً بك في منصة Blend!\n\n🎓 تم تحميل البيانات الأساسية:\n\n📋 الطلاب النشطين:\n- لجين وبيسان: قرآن من 16/2 (7 دفعات = 140 لكل)\n- لمى: قرآن من 21/4 (5 دفعات = 100)\n- ليلى وهاشم: قرآن من 5/8 (1 دفعة = 20 لكل)\n- ليلاس: قرآن من 22/7 (1 دفعة = 20)\n- محمد الشامي: قرآن من 12/8 (بدون دفعات)\n- هاشم - عربي: عربي من 8/8 (1 دفعة = 40)\n\n🛑 الطلاب المتوقفين:\n- زين ومسك: قرآن من 17/2 إلى 1/8 (6 دفعات = 120 لكل)\n\n📅 الجدول الأسبوعي:\n- محمد الشامي: السبت 17:00 والخميس 18:00\n- هاشم - عربي: الاثنين 15:30 والأربعاء 16:00\n\n🔔 المميزات الجديدة:\n✅ تذكيرات ذكية للحصص (اضغط على 🔔 بجانب الحصة)\n✅ تصدير جدول المواعيد إلى Google Calendar (اضغط 📤)\n✅ الإشعارات التلقائية قبل الحصة\n\n💰 إجمالي الإيرادات: 720 دينار');
+                    localStorage.setItem('welcomeShown', 'true');
+                }, 500);
+            }
+        });
+    </script>
+</body>
+</html>
